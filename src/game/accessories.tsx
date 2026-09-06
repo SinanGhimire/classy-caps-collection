@@ -1,311 +1,189 @@
 /**
- * Layered accessory art — painted head gear.
+ * Class headwear.
  *
- * Every accessory is a hand-painted PNG served from the CDN and placed inside
- * the shared 200x240 character space used by `CharacterBase`
- * (see components/ClassPortrait.tsx). Classes are built by stacking accessories
- * on the same base character, so any new class is just a new combination.
- *
- * Head geometry (for placing new pieces):
- *   head ellipse  cx 100  cy 104  rx 52  ry 60   -> head top y = 44, width 104
- *   eyes          (84,112) and (116,112)
- *   torso top     y 152
- *
- * Placement fields:
- *   w    drawn width in the 200x240 space (height follows the natural aspect)
- *   top  y of the image's top edge in the 200x240 space (may be negative)
+ * Every class owns one purpose-built cap, hat, or beanie. All pieces share the
+ * same 200x240 fitting space and the same crown line, so menu portraits and the
+ * animated arena renderer use identical geometry.
  */
-import featherBandUrl from "@/assets/accessories/featherBand.png";
-import antlersUrl from "@/assets/accessories/antlers.png";
-import beanieUrl from "@/assets/accessories/beanie.png";
-import hoodUrl from "@/assets/accessories/hood.png";
-import baseballCapUrl from "@/assets/accessories/baseballCap.png";
-import redBandanaUrl from "@/assets/accessories/redBandana.png";
-import redHeadwrapUrl from "@/assets/accessories/redHeadwrap.png";
-import greenBandanaUrl from "@/assets/accessories/greenBandana.png";
-import greenHeadwrapUrl from "@/assets/accessories/greenHeadwrap.png";
-import armyHelmetUrl from "@/assets/accessories/armyHelmet.png";
-import knightHelmUrl from "@/assets/accessories/knightHelm.png";
-import gladiatorHelmUrl from "@/assets/accessories/gladiatorHelm.png";
-import vikingHelmUrl from "@/assets/accessories/vikingHelm.png";
-import cowboyHatUrl from "@/assets/accessories/cowboyHat.png";
-import fedoraUrl from "@/assets/accessories/fedora.png";
-import pirateHatUrl from "@/assets/accessories/pirateHat.png";
-import jesterHatUrl from "@/assets/accessories/jesterHat.png";
-import crownUrl from "@/assets/accessories/crown.png";
-import witchHatUrl from "@/assets/accessories/witchHat.png";
-import wizardHatUrl from "@/assets/accessories/wizardHat.png";
-import gogglesUrl from "@/assets/accessories/goggles.png";
-import engineerGogglesUrl from "@/assets/accessories/engineerGoggles.png";
-import headMirrorUrl from "@/assets/accessories/headMirror.png";
 
-export type AccessorySlot = "hair" | "hat" | "face";
+export type AccessorySlot = "hat";
+
+export type AccessoryId =
+  | "roadBeanie"
+  | "scrapCap"
+  | "skirmishCap"
+  | "fieldCap"
+  | "shadowBeanie"
+  | "raiderHat"
+  | "corsairTricorn"
+  | "rageBeanie"
+  | "sentinelBowler"
+  | "championHat"
+  | "trapperHat"
+  | "pathfinderCap"
+  | "arcaneHat"
+  | "hexHat"
+  | "wardenHat"
+  | "spiritHat"
+  | "asceticBeanie"
+  | "crusaderHat"
+  | "seerHat"
+  | "machinistCap"
+  | "apothecaryHat"
+  | "toxicBucket"
+  | "medicCap"
+  | "lunaticBeanie"
+  | "harlequinCap"
+  | "carnivalHat"
+  | "wraithHat"
+  | "zealotHat"
+  | "fiendHat"
+  | "harvesterHat"
+  | "gunslingerHat"
+  | "sapperCap"
+  | "sharpshooterCap";
+
+type HatShape =
+  | "beanie"
+  | "cap"
+  | "flatcap"
+  | "fedora"
+  | "cowboy"
+  | "tricorn"
+  | "bowler"
+  | "wizard"
+  | "bucket"
+  | "top";
+
+interface HatSpec {
+  name: string;
+  shape: HatShape;
+  main: string;
+  shade: string;
+  accent: string;
+  mark: string;
+}
 
 interface Piece {
   name: string;
   slot: AccessorySlot;
   url: string;
-  /** natural pixel size of the art, used to keep the aspect ratio */
   nw: number;
   nh: number;
-  /** drawn width in the 200x240 character space */
   w: number;
-  /** top edge of the drawn art in the 200x240 character space */
   top: number;
-  /** optional horizontal nudge when the painted art is not centred */
   dx?: number;
 }
 
-const PIECES = {
-  featherBand: {
-    name: "Feather Band",
-    slot: "hair",
-    url: featherBandUrl,
-    nw: 422,
-    nh: 512,
-    w: 88,
-    top: -38,
-  },
-  antlers: {
-    name: "Antlers",
-    slot: "hair",
-    url: antlersUrl,
-    nw: 512,
-    nh: 368,
-    w: 140,
-    top: -38,
-  },
-  beanie: {
-    name: "Knit Beanie",
-    slot: "hat",
-    url: beanieUrl,
-    nw: 512,
-    nh: 432,
-    w: 112,
-    top: -14,
-  },
-  hood: {
-    name: "Plain Hood",
-    slot: "hat",
-    url: hoodUrl,
-    nw: 465,
-    nh: 512,
-    w: 126,
-    top: -44,
-  },
-  baseballCap: {
-    name: "Baseball Cap",
-    slot: "hat",
-    url: baseballCapUrl,
-    nw: 512,
-    nh: 449,
-    w: 118,
-    top: -18,
-  },
-  redBandana: {
-    name: "Red Bandana",
-    slot: "hat",
-    url: redBandanaUrl,
-    nw: 512,
-    nh: 241,
-    w: 128,
-    top: 34,
-  },
-  redHeadwrap: {
-    name: "Red Headwrap",
-    slot: "hat",
-    url: redHeadwrapUrl,
-    nw: 512,
-    nh: 499,
-    w: 104,
-    top: 20,
-  },
-  greenBandana: {
-    name: "Green Bandana",
-    slot: "hat",
-    url: greenBandanaUrl,
-    nw: 512,
-    nh: 398,
-    w: 112,
-    top: 8,
-  },
-  greenHeadwrap: {
-    name: "Green Headwrap",
-    slot: "hat",
-    url: greenHeadwrapUrl,
-    nw: 492,
-    nh: 512,
-    w: 100,
-    top: -20,
-  },
-  armyHelmet: {
-    name: "Combat Helmet",
-    slot: "hat",
-    url: armyHelmetUrl,
-    nw: 512,
-    nh: 386,
-    w: 122,
-    top: -14,
-  },
-  knightHelm: {
-    name: "Knight Helm",
-    slot: "hat",
-    url: knightHelmUrl,
-    nw: 332,
-    nh: 512,
-    w: 110,
-    top: 6,
-  },
-  gladiatorHelm: {
-    name: "Gladiator Helm",
-    slot: "hat",
-    url: gladiatorHelmUrl,
-    nw: 313,
-    nh: 512,
-    w: 104,
-    top: 4,
-    dx: -6,
-  },
-  vikingHelm: {
-    name: "Viking Helm",
-    slot: "hat",
-    url: vikingHelmUrl,
-    nw: 512,
-    nh: 496,
-    w: 122,
-    top: -22,
-  },
-  cowboyHat: {
-    name: "Cowboy Hat",
-    slot: "hat",
-    url: cowboyHatUrl,
-    nw: 512,
-    nh: 340,
-    w: 142,
-    top: -4,
-  },
-  fedora: {
-    name: "Detective Fedora",
-    slot: "hat",
-    url: fedoraUrl,
-    nw: 512,
-    nh: 325,
-    w: 126,
-    top: 6,
-  },
-  pirateHat: {
-    name: "Pirate Tricorn",
-    slot: "hat",
-    url: pirateHatUrl,
-    nw: 512,
-    nh: 278,
-    w: 144,
-    top: -2,
-  },
-  jesterHat: {
-    name: "Jester Cap",
-    slot: "hat",
-    url: jesterHatUrl,
-    nw: 512,
-    nh: 326,
-    w: 138,
-    top: -4,
-  },
-  crown: {
-    name: "Golden Crown",
-    slot: "hat",
-    url: crownUrl,
-    nw: 512,
-    nh: 403,
-    w: 100,
-    top: -6,
-  },
-  witchHat: {
-    name: "Witch Hat",
-    slot: "hat",
-    url: witchHatUrl,
-    nw: 512,
-    nh: 306,
-    w: 138,
-    top: -6,
-  },
-  wizardHat: {
-    name: "Wizard Hat",
-    slot: "hat",
-    url: wizardHatUrl,
-    nw: 512,
-    nh: 498,
-    w: 124,
-    top: -26,
-  },
-  goggles: {
-    name: "Round Goggles",
-    slot: "face",
-    url: gogglesUrl,
-    nw: 512,
-    nh: 339,
-    w: 110,
-    top: 52,
-  },
-  engineerGoggles: {
-    name: "Engineer Goggles",
-    slot: "face",
-    url: engineerGogglesUrl,
-    nw: 512,
-    nh: 262,
-    w: 110,
-    top: 54,
-  },
-  headMirror: {
-    name: "Head Mirror",
-    slot: "face",
-    url: headMirrorUrl,
-    nw: 512,
-    nh: 467,
-    w: 62,
-    top: 32,
-  },
-} as const satisfies Record<string, Piece>;
+const SPECS: Record<AccessoryId, HatSpec> = {
+  roadBeanie: { name: "Road Beanie", shape: "beanie", main: "#7f303c", shade: "#4b2029", accent: "#d09a58", mark: "//" },
+  scrapCap: { name: "Scrap Cap", shape: "cap", main: "#697b45", shade: "#3b492b", accent: "#d7a84d", mark: "X" },
+  skirmishCap: { name: "Skirmish Flat Cap", shape: "flatcap", main: "#536a65", shade: "#30413e", accent: "#d8c9a7", mark: ">" },
+  fieldCap: { name: "Field Cap", shape: "cap", main: "#53633e", shade: "#303b28", accent: "#b9c878", mark: "I" },
+  shadowBeanie: { name: "Shadow Beanie", shape: "beanie", main: "#292936", shade: "#14141d", accent: "#8069aa", mark: "V" },
+  raiderHat: { name: "Raider Hat", shape: "cowboy", main: "#6f4936", shade: "#3d2720", accent: "#bd6049", mark: "!" },
+  corsairTricorn: { name: "Corsair Tricorn", shape: "tricorn", main: "#263342", shade: "#111923", accent: "#d0a34b", mark: "•" },
+  rageBeanie: { name: "Rage Beanie", shape: "beanie", main: "#8f352d", shade: "#54221f", accent: "#df6c42", mark: "III" },
+  sentinelBowler: { name: "Sentinel Bowler", shape: "bowler", main: "#455565", shade: "#28333e", accent: "#83a4ad", mark: "■" },
+  championHat: { name: "Champion Fedora", shape: "fedora", main: "#a06c2a", shade: "#5e3e1d", accent: "#e0bd61", mark: "★" },
+  trapperHat: { name: "Trapper Hat", shape: "cowboy", main: "#5c4a36", shade: "#33291e", accent: "#79975d", mark: "+" },
+  pathfinderCap: { name: "Pathfinder Cap", shape: "flatcap", main: "#4f6c44", shade: "#2e4229", accent: "#a6bf6a", mark: "^" },
+  arcaneHat: { name: "Arcane Hat", shape: "wizard", main: "#5a437c", shade: "#302640", accent: "#72b4c3", mark: "*" },
+  hexHat: { name: "Hex Hat", shape: "wizard", main: "#3d294b", shade: "#211629", accent: "#a8688d", mark: "?" },
+  wardenHat: { name: "Warden Widebrim", shape: "fedora", main: "#415c38", shade: "#253720", accent: "#8eb46d", mark: "Y" },
+  spiritHat: { name: "Spirit Hat", shape: "wizard", main: "#31566a", shade: "#1d3441", accent: "#72c3c7", mark: "○" },
+  asceticBeanie: { name: "Ascetic Beanie", shape: "beanie", main: "#a35d2f", shade: "#62371f", accent: "#d5ac65", mark: "=" },
+  crusaderHat: { name: "Crusader Fedora", shape: "fedora", main: "#c2b58d", shade: "#70684f", accent: "#9b4c3d", mark: "+" },
+  seerHat: { name: "Seer Hat", shape: "wizard", main: "#ddd3bd", shade: "#8e8574", accent: "#75a1a3", mark: "○" },
+  machinistCap: { name: "Machinist Cap", shape: "cap", main: "#805832", shade: "#49341f", accent: "#c48a42", mark: "⚙" },
+  apothecaryHat: { name: "Apothecary Hat", shape: "bowler", main: "#526743", shade: "#304029", accent: "#a8bc69", mark: "+" },
+  toxicBucket: { name: "Toxic Bucket Hat", shape: "bucket", main: "#66743d", shade: "#394326", accent: "#a4c551", mark: "!" },
+  medicCap: { name: "Medic Cap", shape: "cap", main: "#d6d0bf", shade: "#777266", accent: "#b84642", mark: "+" },
+  lunaticBeanie: { name: "Lunatic Beanie", shape: "beanie", main: "#72466e", shade: "#40283e", accent: "#d36a65", mark: "?!" },
+  harlequinCap: { name: "Harlequin Cap", shape: "flatcap", main: "#8d3543", shade: "#4d2028", accent: "#d8aa4e", mark: "◆" },
+  carnivalHat: { name: "Carnival Top Hat", shape: "top", main: "#3d5e51", shade: "#22372f", accent: "#c85e4b", mark: "★" },
+  wraithHat: { name: "Wraith Fedora", shape: "fedora", main: "#6c6875", shade: "#383641", accent: "#9fb5b4", mark: "~" },
+  zealotHat: { name: "Zealot Hat", shape: "wizard", main: "#4b354b", shade: "#291e2a", accent: "#a04f4f", mark: "V" },
+  fiendHat: { name: "Fiend Tricorn", shape: "tricorn", main: "#652f30", shade: "#37191c", accent: "#d65b3c", mark: "^" },
+  harvesterHat: { name: "Harvester Widebrim", shape: "fedora", main: "#25262c", shade: "#111216", accent: "#78617e", mark: "|" },
+  gunslingerHat: { name: "Gunslinger Hat", shape: "cowboy", main: "#74482a", shade: "#3f291a", accent: "#d0a14c", mark: "★" },
+  sapperCap: { name: "Sapper Work Cap", shape: "cap", main: "#596044", shade: "#333829", accent: "#c58a3f", mark: "II" },
+  sharpshooterCap: { name: "Sharpshooter Cap", shape: "flatcap", main: "#334b5d", shade: "#1e2e3a", accent: "#6da5ad", mark: "+" },
+};
 
-export type AccessoryId = keyof typeof PIECES;
+const OUTLINE = "#171218";
+
+function silhouette(shape: HatShape, main: string, shade: string, accent: string) {
+  const edge = `stroke="${OUTLINE}" stroke-width="7" stroke-linejoin="round" stroke-linecap="round"`;
+  switch (shape) {
+    case "beanie":
+      return `<path d="M48 78 Q51 23 100 18 Q149 23 152 78Z" fill="${main}" ${edge}/><path d="M46 72 Q100 62 154 72L151 94Q100 86 49 94Z" fill="${shade}" ${edge}/><path d="M67 34Q100 21 133 34" fill="none" stroke="${accent}" stroke-width="5" opacity=".75"/>`;
+    case "cap":
+      return `<path d="M48 76Q53 28 102 26Q139 28 149 65L145 79Q94 68 48 76Z" fill="${main}" ${edge}/><path d="M83 75Q143 65 176 83Q138 101 88 91Z" fill="${shade}" ${edge}/><path d="M99 29V69" stroke="${accent}" stroke-width="5" opacity=".7"/>`;
+    case "flatcap":
+      return `<path d="M43 71Q55 30 104 31Q145 32 158 70L145 82H49Z" fill="${main}" ${edge}/><path d="M49 74Q111 65 171 76Q153 94 96 89L49 86Z" fill="${shade}" ${edge}/><path d="M70 45Q107 31 137 49" fill="none" stroke="${accent}" stroke-width="5" opacity=".7"/>`;
+    case "fedora":
+      return `<path d="M64 73L70 28Q100 16 130 28L138 73Z" fill="${main}" ${edge}/><path d="M69 57Q101 65 134 56L137 74H65Z" fill="${accent}" ${edge}/><path d="M25 78Q101 65 175 78Q157 100 101 94Q44 100 25 78Z" fill="${shade}" ${edge}/>`;
+    case "cowboy":
+      return `<path d="M65 71L74 27Q101 41 127 27L137 71Z" fill="${main}" ${edge}/><path d="M65 58Q100 68 137 58L139 74H62Z" fill="${accent}" ${edge}/><path d="M18 73Q48 92 83 76Q123 91 182 66Q174 104 111 94Q48 105 18 73Z" fill="${shade}" ${edge}/>`;
+    case "tricorn":
+      return `<path d="M27 81Q49 70 59 35Q98 54 140 35Q151 70 174 81Q139 103 101 84Q62 103 27 81Z" fill="${main}" ${edge}/><path d="M39 79Q74 91 101 75Q129 92 163 79" fill="none" stroke="${accent}" stroke-width="7"/>`;
+    case "bowler":
+      return `<path d="M55 73Q56 24 100 21Q144 24 145 73Z" fill="${main}" ${edge}/><path d="M54 58H146V75H54Z" fill="${accent}" ${edge}/><path d="M29 78Q100 69 171 78Q158 97 100 92Q42 97 29 78Z" fill="${shade}" ${edge}/>`;
+    case "wizard":
+      return `<path d="M63 77Q76 55 89 12Q111 34 131 71L137 80Z" fill="${main}" ${edge}/><path d="M73 50Q100 61 126 49" fill="none" stroke="${accent}" stroke-width="6"/><path d="M24 79Q99 64 176 79Q151 101 101 94Q49 102 24 79Z" fill="${shade}" ${edge}/>`;
+    case "bucket":
+      return `<path d="M59 35Q100 22 141 35L151 76H49Z" fill="${main}" ${edge}/><path d="M53 58Q101 70 147 58" fill="none" stroke="${accent}" stroke-width="6"/><path d="M31 77Q100 66 169 77L155 94Q100 87 45 94Z" fill="${shade}" ${edge}/>`;
+    case "top":
+      return `<path d="M66 16H134L139 75H61Z" fill="${main}" ${edge}/><path d="M62 56H138V76H62Z" fill="${accent}" ${edge}/><path d="M27 78Q100 68 173 78Q156 98 100 93Q44 98 27 78Z" fill="${shade}" ${edge}/>`;
+  }
+}
+
+function makeHatUrl(spec: HatSpec) {
+  const markSize = spec.mark.length > 1 ? 13 : 18;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 120">${silhouette(spec.shape, spec.main, spec.shade, spec.accent)}<text x="101" y="72" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="${markSize}" font-weight="900" fill="${spec.accent}" stroke="${OUTLINE}" stroke-width="3" paint-order="stroke">${spec.mark}</text></svg>`;
+  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+}
 
 export interface AccessoryDef extends Piece {
   id: AccessoryId;
-  /** drawn height in the 200x240 character space */
   h: number;
-  /** left edge of the drawn art in the 200x240 character space */
   x: number;
 }
 
 export const CHAR_CX = 100;
 
-export const ACCESSORIES: Record<AccessoryId, AccessoryDef> = Object.fromEntries(
-  (Object.keys(PIECES) as AccessoryId[]).map((id) => {
-    const p = PIECES[id] as Piece;
-    const h = (p.w * p.nh) / p.nw;
-    return [id, { ...p, id, h, x: CHAR_CX - p.w / 2 + (p.dx ?? 0) }];
+export const ACCESSORIES = Object.fromEntries(
+  (Object.keys(SPECS) as AccessoryId[]).map((id) => {
+    const spec = SPECS[id];
+    const piece: Piece = {
+      name: spec.name,
+      slot: "hat",
+      url: makeHatUrl(spec),
+      nw: 200,
+      nh: 120,
+      w: 150,
+      top: -27,
+    };
+    return [id, { ...piece, id, h: 90, x: 25 }];
   }),
 ) as Record<AccessoryId, AccessoryDef>;
 
 export const ACCESSORY_IDS = Object.keys(ACCESSORIES) as AccessoryId[];
 
-/** Bands sit under hats, face gear paints last. */
-const ORDER: Record<AccessorySlot, number> = { hair: 0, hat: 1, face: 2 };
-
 export function sortAccessories(ids: readonly AccessoryId[]): AccessoryId[] {
-  return [...ids].sort((a, b) => ORDER[ACCESSORIES[a].slot] - ORDER[ACCESSORIES[b].slot]);
+  return [...ids];
 }
 
-/** One accessory as an SVG <image>, placed in the shared 200x240 space. */
 export function AccessoryArt({ id }: { id: AccessoryId }) {
-  const a = ACCESSORIES[id];
+  const hat = ACCESSORIES[id];
   return (
     <image
-      href={a.url}
-      x={a.x}
-      y={a.top}
-      width={a.w}
-      height={a.h}
+      href={hat.url}
+      x={hat.x}
+      y={hat.top}
+      width={hat.w}
+      height={hat.h}
       preserveAspectRatio="xMidYMid meet"
     />
   );
