@@ -167,7 +167,6 @@ export const ACCESSORIES = Object.fromEntries(
       nh: 120,
       w: spec.width ?? 150,
       top: spec.top ?? -27,
-      dx: spec.dx,
     };
     return [id, { ...piece, id, h: 90, x: 25 + (spec.dx ?? 0) - ((spec.width ?? 150) - 150) / 2 }];
   }),
