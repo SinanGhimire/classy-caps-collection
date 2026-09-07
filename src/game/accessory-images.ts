@@ -134,6 +134,7 @@ export function drawWorn(
     const img = accessoryImage(id);
     if (!img || !img.complete || !img.naturalWidth) continue;
     const def = ACCESSORIES[id];
+    if (!def) continue;
     ctx.drawImage(
       img,
       originX + def.x * scale,
