@@ -5,12 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Echo Vanguards design system — "signal arcade".
+ * Echo Vanguards design system — "midnight arsenal".
  *
  * Everything in the menus is built from three ideas:
  *   1. A hard black ink outline on every surface (--ink).
  *   2. A solid drop shadow underneath instead of a blur (shadow-soft / pop-*).
- *   3. Electric teal, signal coral and warm gold on neutral graphite trays.
+ *   3. Cold steel blue, signal cyan and warm gold on deep navy trays.
  *
  * Components must use these tokens and the .pop-* recipes below — never
  * ad-hoc colours.
@@ -83,55 +83,55 @@
 
   /* Dark arcade shell is the only theme; light values mirror it so nothing
      washes out if the dark class is missing. */
-  --background: oklch(0.15 0.018 225);
+  --background: oklch(0.13 0.035 255);
   --foreground: oklch(0.97 0.01 280);
-  --card: oklch(0.23 0.025 220);
+  --card: oklch(0.22 0.055 252);
   --card-foreground: oklch(0.97 0.01 280);
-  --popover: oklch(0.21 0.025 220);
+  --popover: oklch(0.19 0.05 254);
   --popover-foreground: oklch(0.97 0.01 280);
-  --primary: oklch(0.76 0.14 190);
-  --primary-foreground: oklch(0.14 0.025 220);
-  --secondary: oklch(0.3 0.035 220);
+  --primary: oklch(0.72 0.14 235);
+  --primary-foreground: oklch(0.13 0.035 255);
+  --secondary: oklch(0.29 0.07 250);
   --secondary-foreground: oklch(0.97 0.01 280);
-  --muted: oklch(0.27 0.025 220);
-  --muted-foreground: oklch(0.76 0.025 210);
+  --muted: oklch(0.25 0.045 252);
+  --muted-foreground: oklch(0.76 0.045 238);
   --accent: oklch(0.83 0.16 85);
   --accent-foreground: oklch(0.2 0.04 60);
   --destructive: oklch(0.62 0.22 24);
   --destructive-foreground: oklch(0.99 0.005 280);
-  --border: oklch(0.1 0.02 290);
-  --input: oklch(0.3 0.05 292);
-  --ring: oklch(0.76 0.14 190);
+  --border: oklch(0.09 0.025 258);
+  --input: oklch(0.29 0.065 250);
+  --ring: oklch(0.72 0.14 235);
   --chart-1: oklch(0.83 0.16 85);
   --chart-2: oklch(0.72 0.17 160);
   --chart-3: oklch(0.68 0.19 300);
   --chart-4: oklch(0.7 0.19 30);
   --chart-5: oklch(0.75 0.14 220);
-  --sidebar: oklch(0.19 0.025 220);
+  --sidebar: oklch(0.17 0.045 255);
   --sidebar-foreground: oklch(0.97 0.01 280);
-  --sidebar-primary: oklch(0.76 0.14 190);
+  --sidebar-primary: oklch(0.72 0.14 235);
   --sidebar-primary-foreground: oklch(0.99 0.005 280);
-  --sidebar-accent: oklch(0.3 0.035 220);
+  --sidebar-accent: oklch(0.29 0.07 250);
   --sidebar-accent-foreground: oklch(0.97 0.01 280);
   --sidebar-border: oklch(0.1 0.02 290);
   --sidebar-ring: oklch(0.83 0.16 85);
 
   /* arcade palette */
-  --ink: oklch(0.11 0.018 225);
+  --ink: oklch(0.08 0.025 258);
   --gold: oklch(0.86 0.16 88);
   --orange: oklch(0.72 0.18 42);
   --violet: oklch(0.73 0.14 315);
   --signal: oklch(0.69 0.2 28);
-  --cyan: oklch(0.79 0.13 194);
-  --pop-shell: oklch(0.31 0.045 207);
-  --pop-tray: oklch(0.17 0.025 220);
-  --pop-card: oklch(0.36 0.055 185);
-  --pop-edge: oklch(0.79 0.075 190);
-  --arena-frame: oklch(0.1 0.02 225);
+  --cyan: oklch(0.78 0.12 225);
+  --pop-shell: oklch(0.27 0.075 250);
+  --pop-tray: oklch(0.145 0.045 258);
+  --pop-card: oklch(0.31 0.075 245);
+  --pop-edge: oklch(0.75 0.09 225);
+  --arena-frame: oklch(0.075 0.025 258);
 }
 
 .dark {
-  --ink: oklch(0.11 0.018 225);
+  --ink: oklch(0.08 0.025 258);
 }
 
 @layer base {

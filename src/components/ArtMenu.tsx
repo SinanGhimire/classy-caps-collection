@@ -229,7 +229,7 @@ export function ArtMenu({
 
   return (
     <main
-      className="relative grid h-[100dvh] w-full place-items-center overflow-hidden bg-[#0d0d0d] px-1 sm:px-2"
+      className="relative grid h-[100dvh] w-full place-items-center overflow-hidden bg-arena-frame px-1 sm:px-2"
       style={{
         paddingLeft: "env(safe-area-inset-left)",
         paddingRight: "env(safe-area-inset-right)",

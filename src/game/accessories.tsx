@@ -62,6 +62,9 @@ interface HatSpec {
   shade: string;
   accent: string;
   mark: string;
+  width?: number;
+  top?: number;
+  dx?: number;
 }
 
 interface Piece {
@@ -162,10 +165,11 @@ export const ACCESSORIES = Object.fromEntries(
       url: makeHatUrl(spec),
       nw: 200,
       nh: 120,
-      w: 150,
-      top: -27,
+      w: spec.width ?? 150,
+      top: spec.top ?? -27,
+      dx: spec.dx,
     };
-    return [id, { ...piece, id, h: 90, x: 25 }];
+    return [id, { ...piece, id, h: 90, x: 25 + (spec.dx ?? 0) - ((spec.width ?? 150) - 150) / 2 }];
   }),
 ) as Record<AccessoryId, AccessoryDef>;
 
@@ -177,6 +181,7 @@ export function sortAccessories(ids: readonly AccessoryId[]): AccessoryId[] {
 
 export function AccessoryArt({ id }: { id: AccessoryId }) {
   const hat = ACCESSORIES[id];
+  if (!hat) return null;
   return (
     <image
       href={hat.url}
