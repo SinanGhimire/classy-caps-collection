@@ -165,10 +165,13 @@ export const ACCESSORIES = Object.fromEntries(
       url: makeHatUrl(spec),
       nw: 200,
       nh: 120,
-      w: spec.width ?? 150,
-      top: spec.top ?? -27,
+      // Fit the crown around the 104px-wide skull rather than balancing the
+      // brim on its top edge. At 180px the narrower cap/beanie crowns hug the
+      // temples, while wide brims still clear the face naturally.
+      w: spec.width ?? 180,
+      top: spec.top ?? -5,
     };
-    return [id, { ...piece, id, h: 90, x: 25 + (spec.dx ?? 0) - ((spec.width ?? 150) - 150) / 2 }];
+    return [id, { ...piece, id, h: 108, x: 10 + (spec.dx ?? 0) - ((spec.width ?? 180) - 180) / 2 }];
   }),
 ) as Record<AccessoryId, AccessoryDef>;
 
